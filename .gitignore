@@ -1,0 +1,12 @@
+.build/
+.swiftpm/
+DerivedData/
+*.xcodeproj
+*.xcworkspace
+*.xcuserstate
+*.DS_Store
+work/
+
+# Release/notarization scratch artifacts
+*.dSYM
+*.notary-submit.zip
