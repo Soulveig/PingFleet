@@ -2,17 +2,25 @@ import Foundation
 
 enum AppInfo {
     static let name = "PingFleet"
-    static let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.2.8"
+    static let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.2.9"
     static let versionDisplay = "Version \(version)"
     static let updateManifestURLString = "https://api.github.com/repos/Soulveig/PingFleet/releases/latest"
 
     static let changelog = [
         ReleaseNote(
+            version: "0.2.9",
+            date: "2026-06-22",
+            items: [
+                "Removed old update manifest support and old app-name migration code.",
+                "Kept updates focused on GitHub Releases only.",
+                "Cleaned old naming references from project scripts and documentation."
+            ]
+        ),
+        ReleaseNote(
             version: "0.2.8",
             date: "2026-06-22",
             items: [
                 "Switched automatic update checks to GitHub Releases.",
-                "Ignored placeholder example.com update URLs left in older settings.",
                 "Added the app version to the main window title."
             ]
         ),
@@ -64,7 +72,6 @@ enum AppInfo {
             date: "2026-06-21",
             items: [
                 "Renamed the app to PingFleet after checking GitHub and web results for existing Ping-prefixed names.",
-                "Kept automatic migration from earlier PingWatch and LatencyDeck host storage folders.",
                 "Removed separate build-number handling so releases use only the public version.",
                 "Added time stamps to the latency history graph."
             ]
@@ -86,7 +93,7 @@ enum AppInfo {
                 "Added a native macOS interface for monitoring hosts with periodic ping.",
                 "Added fixed toolbar labels, a menu-based ping interval selector, and a corrected app icon.",
                 "Added Russian and English interface text.",
-                "Added MacTreeSize-style JSON update manifests and in-app update installation.",
+                "Added in-app update installation.",
                 "Added file import, CSV export, Developer ID signing, notarization, and stapling."
             ]
         ),

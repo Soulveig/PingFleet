@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT_DIR"
 
-VERSION="${VERSION:-0.2.8}"
+VERSION="${VERSION:-0.2.9}"
 IDENTITY="${IDENTITY:-Developer ID Application: Alexey Golovatyuk (B8GJVVNEFH)}"
 UPDATE_MANIFEST_URL="${UPDATE_MANIFEST_URL:-https://api.github.com/repos/Soulveig/PingFleet/releases/latest}"
 export VERSION UPDATE_MANIFEST_URL
@@ -51,7 +51,7 @@ cat > "$CONTENTS_DIR/Info.plist" <<'PLIST'
     <string>public.app-category.utilities</string>
     <key>NSHighResolutionCapable</key>
     <true/>
-    <key>MTUpdateManifestURL</key>
+    <key>PingFleetUpdateURL</key>
     <string>__UPDATE_MANIFEST_URL__</string>
     <key>NSDocumentsFolderUsageDescription</key>
     <string>PingFleet needs access to update itself when the app is run from your Documents folder.</string>

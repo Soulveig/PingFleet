@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 APP_DIR="$ROOT_DIR/.build/release/PingFleet.app"
 SUBMIT_ZIP="$ROOT_DIR/.build/release/PingFleet-notary-submit.zip"
-NOTARY_PROFILE="${NOTARY_PROFILE:-mactreesize-notary}"
+NOTARY_PROFILE="${NOTARY_PROFILE:-pingfleet-notary}"
 
 if [ ! -d "$APP_DIR" ]; then
     echo "Missing $APP_DIR. Build the app first." >&2

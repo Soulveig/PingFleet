@@ -135,53 +135,16 @@ final class AppUpdater: ObservableObject {
     }
 
     private static var manifestURL: URL? {
-        let defaultValue = UserDefaults.standard.string(forKey: "UpdateManifestURL")
-        let bundleValue = Bundle.main.object(forInfoDictionaryKey: "MTUpdateManifestURL") as? String
-        let rawValues = [defaultValue, bundleValue, AppInfo.updateManifestURLString]
+        let bundleValue = Bundle.main.object(forInfoDictionaryKey: "PingFleetUpdateURL") as? String
+        let rawValue = [bundleValue, AppInfo.updateManifestURLString]
             .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
-
-        for rawValue in rawValues where rawValue.isEmpty == false {
-            guard let url = URL(string: rawValue), Self.isPlaceholderUpdateURL(url) == false else {
-                continue
-            }
-
-            return Self.normalizedUpdateURL(url)
-        }
-
-        return nil
-    }
-
-    private static func normalizedUpdateURL(_ url: URL) -> URL {
-        if url.host == "api.github.com" {
-            return url
-        }
-
-        if url.host == "github.com" {
-            let components = url.pathComponents.filter { $0 != "/" }
-            if components.count >= 4, components[2] == "releases", components[3] == "latest" {
-                return URL(string: "https://api.github.com/repos/\(components[0])/\(components[1])/releases/latest") ?? url
-            }
-        }
-
-        if url.pathExtension.isEmpty {
-            return url.appendingPathComponent("update.json")
-        }
-
-        return url
-    }
-
-    private static func isPlaceholderUpdateURL(_ url: URL) -> Bool {
-        guard let host = url.host?.lowercased() else { return false }
-        return host == "example.com" || host.hasSuffix(".example.com")
+            .first { $0.isEmpty == false }
+        guard let rawValue else { return nil }
+        return URL(string: rawValue)
     }
 
     private static func decodeRelease(from data: Data) throws -> AppUpdateRelease {
-        let decoder = JSONDecoder()
-        if let manifest = try? decoder.decode(AppUpdateManifest.self, from: data) {
-            return try manifest.release()
-        }
-
-        let githubRelease = try decoder.decode(GitHubReleaseManifest.self, from: data)
+        let githubRelease = try JSONDecoder().decode(GitHubReleaseManifest.self, from: data)
         return try githubRelease.release()
     }
 
@@ -315,30 +278,12 @@ final class AppUpdater: ObservableObject {
     }
 }
 
-struct AppUpdateManifest: Decodable {
-    let version: String
-    let downloadURL: URL
-    let releaseNotes: String?
-
-    func release() throws -> AppUpdateRelease {
-        guard version.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false else {
-            throw AppUpdateError.invalidManifest
-        }
-
-        return AppUpdateRelease(version: version, downloadURL: downloadURL, releaseNotes: releaseNotes)
-    }
-}
-
 struct GitHubReleaseManifest: Decodable {
     let tagName: String
-    let name: String?
-    let body: String?
     let assets: [GitHubReleaseAsset]
 
     enum CodingKeys: String, CodingKey {
         case tagName = "tag_name"
-        case name
-        case body
         case assets
     }
 
@@ -356,7 +301,7 @@ struct GitHubReleaseManifest: Decodable {
             throw AppUpdateError.invalidManifest
         }
 
-        return AppUpdateRelease(version: String(version), downloadURL: asset.browserDownloadURL, releaseNotes: body ?? name)
+        return AppUpdateRelease(version: String(version), downloadURL: asset.browserDownloadURL)
     }
 }
 
@@ -373,7 +318,6 @@ struct GitHubReleaseAsset: Decodable {
 struct AppUpdateRelease {
     let version: String
     let downloadURL: URL
-    let releaseNotes: String?
 }
 
 enum AppUpdateError: LocalizedError {

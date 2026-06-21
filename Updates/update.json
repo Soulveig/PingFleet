@@ -1,5 +1,0 @@
-{
-  "version": "0.2.8",
-  "downloadURL": "https://github.com/Soulveig/PingFleet/releases/download/v0.2.8/PingFleet-0.2.8.zip",
-  "releaseNotes": "Switched automatic update checks to GitHub Releases and added the app version to the window title."
-}

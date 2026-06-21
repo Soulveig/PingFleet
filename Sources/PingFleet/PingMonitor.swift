@@ -23,7 +23,6 @@ final class PingMonitor: ObservableObject {
         let directory = appSupport.appendingPathComponent("PingFleet", isDirectory: true)
         try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         storageURL = directory.appendingPathComponent("hosts.json")
-        Self.migrateLegacyStorageIfNeeded(to: storageURL, appSupport: appSupport)
         load()
 
         if hosts.isEmpty {
@@ -201,17 +200,4 @@ final class PingMonitor: ObservableObject {
         return formatter
     }()
 
-    private static func migrateLegacyStorageIfNeeded(to storageURL: URL, appSupport: URL) {
-        guard FileManager.default.fileExists(atPath: storageURL.path) == false else { return }
-
-        let legacyStorageURLs = [
-            appSupport.appendingPathComponent("LatencyDeck").appendingPathComponent("hosts.json"),
-            appSupport.appendingPathComponent("PingWatch").appendingPathComponent("hosts.json")
-        ]
-
-        for legacyURL in legacyStorageURLs where FileManager.default.fileExists(atPath: legacyURL.path) {
-            try? FileManager.default.copyItem(at: legacyURL, to: storageURL)
-            return
-        }
-    }
 }
