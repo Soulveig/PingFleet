@@ -1,5 +1,5 @@
 {
-  "version": "0.2.5",
-  "downloadURL": "https://example.com/pingfleet/update/PingFleet-0.2.5.zip",
-  "releaseNotes": "Changes the default ping interval to 1 second, switches the project to the MIT license, and prepares GitHub publication."
+  "version": "0.2.6",
+  "downloadURL": "https://example.com/pingfleet/update/PingFleet-0.2.6.zip",
+  "releaseNotes": "Tightens the main window layout, removes unused Avg/Min/Max table columns, and fixes toolbar button spacing."
 }

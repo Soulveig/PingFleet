@@ -4,12 +4,12 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT_DIR"
 
-VERSION="${VERSION:-0.2.5}"
+VERSION="${VERSION:-0.2.6}"
 BASE_URL="${BASE_URL:-https://example.com/pingfleet}"
 ZIP_PATH="$ROOT_DIR/.build/release/PingFleet-$VERSION.zip"
 UPDATE_JSON_PATH="$ROOT_DIR/Updates/update.json"
 NOTARIZE="${NOTARIZE:-1}"
-RELEASE_NOTES="${RELEASE_NOTES:-Changes the default ping interval to 1 second, switches the project to the MIT license, and prepares GitHub publication.}"
+RELEASE_NOTES="${RELEASE_NOTES:-Tightens the main window layout, removes unused Avg/Min/Max table columns, and fixes toolbar button spacing.}"
 
 VERSION="$VERSION" UPDATE_MANIFEST_URL="$BASE_URL/update/" ./Scripts/package-app.sh
 

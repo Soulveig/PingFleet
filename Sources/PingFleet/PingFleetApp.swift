@@ -10,7 +10,7 @@ struct PingFleetApp: App {
             ContentView()
                 .environmentObject(monitor)
                 .environmentObject(updater)
-                .frame(minWidth: 980, minHeight: 600)
+                .frame(minWidth: 913, minHeight: 600)
         }
         .windowStyle(.titleBar)
         .commands {

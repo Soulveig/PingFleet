@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT_DIR"
 
-VERSION="${VERSION:-0.2.5}"
+VERSION="${VERSION:-0.2.6}"
 IDENTITY="${IDENTITY:-Developer ID Application: Alexey Golovatyuk (B8GJVVNEFH)}"
 UPDATE_MANIFEST_URL="${UPDATE_MANIFEST_URL:-https://example.com/pingfleet/update/}"
 export VERSION UPDATE_MANIFEST_URL

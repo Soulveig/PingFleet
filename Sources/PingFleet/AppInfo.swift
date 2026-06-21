@@ -2,11 +2,20 @@ import Foundation
 
 enum AppInfo {
     static let name = "PingFleet"
-    static let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.2.5"
+    static let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.2.6"
     static let versionDisplay = "Version \(version)"
     static let updateManifestURLString = "https://example.com/pingfleet/update/"
 
     static let changelog = [
+        ReleaseNote(
+            version: "0.2.6",
+            date: "2026-06-22",
+            items: [
+                "Tightened the main window width after removing unused table columns.",
+                "Removed Avg, Min, and Max from the default host table.",
+                "Kept the filter row aligned with the action buttons and fixed toolbar button overlap."
+            ]
+        ),
         ReleaseNote(
             version: "0.2.5",
             date: "2026-06-22",

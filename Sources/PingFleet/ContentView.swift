@@ -8,6 +8,8 @@ struct ContentView: View {
     @State private var exporting = false
     @State private var showingUpdates = false
     @State private var showingDetails = false
+    private let toolbarContentWidth: CGFloat = 889
+    private let actionButtonSize = CGSize(width: 86, height: 44)
 
     var body: some View {
         VStack(spacing: 0) {
@@ -67,6 +69,8 @@ struct ContentView: View {
                 .frame(width: 150)
                 .help(L10n.pingIntervalHelp)
             }
+            .frame(width: toolbarContentWidth, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             HStack(spacing: 10) {
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -122,6 +126,7 @@ struct ContentView: View {
                         }
                     }
                     .padding(.vertical, 1)
+                    .frame(width: toolbarContentWidth, alignment: .leading)
                 }
             }
         }
@@ -131,8 +136,8 @@ struct ContentView: View {
 
     private var toolbarSeparator: some View {
         Divider()
-            .frame(height: 38)
-            .padding(.horizontal, 4)
+            .frame(width: 1, height: 38)
+            .frame(width: 9)
     }
 
     private func actionButton(title: String, systemImage: String, prominent: Bool = false, help: String, action: @escaping () -> Void) -> some View {
@@ -147,11 +152,11 @@ struct ContentView: View {
                     .minimumScaleFactor(0.65)
                     .frame(width: 76)
             }
-            .frame(width: 86, height: 42)
+            .frame(width: actionButtonSize.width, height: actionButtonSize.height)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.bordered)
-        .tint(prominent ? .accentColor : nil)
+        .frame(width: actionButtonSize.width, height: actionButtonSize.height)
+        .buttonStyle(ToolbarActionButtonStyle(size: actionButtonSize, prominent: prominent))
         .help(help)
     }
 
@@ -192,24 +197,6 @@ struct ContentView: View {
 
             TableColumn(L10n.last) { host in
                 Text(format(host.lastLatencyMilliseconds))
-                    .monospacedDigit()
-            }
-            .width(76)
-
-            TableColumn("Avg") { host in
-                Text(format(host.averageLatencyMilliseconds))
-                    .monospacedDigit()
-            }
-            .width(76)
-
-            TableColumn(L10n.min) { host in
-                Text(format(host.minimumLatencyMilliseconds))
-                    .monospacedDigit()
-            }
-            .width(76)
-
-            TableColumn(L10n.max) { host in
-                Text(format(host.maximumLatencyMilliseconds))
                     .monospacedDigit()
             }
             .width(76)
@@ -352,17 +339,31 @@ struct ImportHostsView: View {
 }
 
 struct HostDetailView: View {
+    @Environment(\.dismiss) private var dismiss
     let host: PingHost?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             if let host {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(host.name)
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                    Text(host.address)
-                        .foregroundStyle(.secondary)
+                HStack(alignment: .top, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(host.name)
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                        Text(host.address)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Spacer()
+
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                    .buttonStyle(.borderless)
+                    .keyboardShortcut(.cancelAction)
+                    .help(L10n.cancel)
                 }
 
                 latencySparkline(host.history)
@@ -559,6 +560,45 @@ struct UpdatesView: View {
         }
         .padding(20)
         .frame(minWidth: 520, idealWidth: 520, minHeight: 260)
+    }
+}
+
+private struct ToolbarActionButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
+    let size: CGSize
+    let prominent: Bool
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .frame(width: size.width, height: size.height)
+            .foregroundStyle(foregroundColor)
+            .background(
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .fill(backgroundColor(configuration: configuration))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .strokeBorder(.white.opacity(isEnabled ? 0.14 : 0.06), lineWidth: 1)
+            )
+            .opacity(configuration.isPressed ? 0.82 : 1)
+    }
+
+    private var foregroundColor: Color {
+        if prominent && isEnabled {
+            return .white
+        }
+
+        return isEnabled ? .primary : .secondary.opacity(0.5)
+    }
+
+    private func backgroundColor(configuration: Configuration) -> Color {
+        if prominent {
+            return .accentColor.opacity(isEnabled ? (configuration.isPressed ? 0.72 : 0.9) : 0.24)
+        }
+
+        return Color(nsColor: .controlColor)
+            .opacity(isEnabled ? (configuration.isPressed ? 0.72 : 0.92) : 0.42)
     }
 }
 
