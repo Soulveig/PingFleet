@@ -8,13 +8,14 @@ final class PingMonitor: ObservableObject {
     @Published var intervalSeconds: Double = 1
     @Published var timeoutSeconds: Double = 1
     @Published var isRunning = false
-    @Published var selectedHostID: PingHost.ID?
+    @Published var selectedHostIDs: Set<PingHost.ID> = []
     @Published var showAddHost = false
     @Published var showImportHosts = false
     @Published var searchText = ""
 
     private let runner = PingRunner()
     private var monitorTask: Task<Void, Never>?
+    private var runningHostIDs: Set<PingHost.ID>?
     private let storageURL: URL
 
     init() {
@@ -42,7 +43,7 @@ final class PingMonitor: ObservableObject {
     }
 
     var selectedHost: PingHost? {
-        guard let selectedHostID else { return nil }
+        guard let selectedHostID = selectedHostIDs.first else { return nil }
         return hosts.first(where: { $0.id == selectedHostID })
     }
 
@@ -55,9 +56,9 @@ final class PingMonitor: ObservableObject {
     }
 
     func removeSelectedHost() {
-        guard let selectedHostID else { return }
-        hosts.removeAll { $0.id == selectedHostID }
-        self.selectedHostID = nil
+        guard !selectedHostIDs.isEmpty else { return }
+        hosts.removeAll { selectedHostIDs.contains($0.id) }
+        selectedHostIDs.removeAll()
         save()
     }
 
@@ -75,6 +76,7 @@ final class PingMonitor: ObservableObject {
     func start() {
         guard !isRunning else { return }
         isRunning = true
+        runningHostIDs = selectedHostIDs.isEmpty ? nil : selectedHostIDs
         monitorTask = Task { [weak self] in
             while !Task.isCancelled {
                 await self?.pollEnabledHosts()
@@ -88,11 +90,13 @@ final class PingMonitor: ObservableObject {
         isRunning = false
         monitorTask?.cancel()
         monitorTask = nil
+        runningHostIDs = nil
     }
 
     func pollOnce() {
+        let targetHostIDs = selectedHostIDs.isEmpty ? nil : selectedHostIDs
         Task {
-            await pollEnabledHosts()
+            await pollEnabledHosts(targetHostIDs: targetHostIDs)
         }
     }
 
@@ -145,9 +149,12 @@ final class PingMonitor: ObservableObject {
         try? exportCSV().write(to: url, atomically: true, encoding: .utf8)
     }
 
-    private func pollEnabledHosts() async {
+    private func pollEnabledHosts(targetHostIDs: Set<PingHost.ID>? = nil) async {
         await withTaskGroup(of: (UUID, PingResult).self) { group in
-            let enabledHosts = hosts.filter(\.enabled)
+            let allowedHostIDs = targetHostIDs ?? runningHostIDs
+            let enabledHosts = hosts.filter { host in
+                host.enabled && (allowedHostIDs == nil || allowedHostIDs?.contains(host.id) == true)
+            }
             for host in enabledHosts {
                 group.addTask { [runner] in
                     let result = await runner.ping(address: host.address, timeoutSeconds: Int(self.timeoutSeconds))

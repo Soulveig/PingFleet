@@ -97,7 +97,7 @@ struct ContentView: View {
                         actionButton(title: L10n.remove, systemImage: "minus", help: L10n.removeHelp) {
                             monitor.removeSelectedHost()
                         }
-                        .disabled(monitor.selectedHostID == nil)
+                        .disabled(monitor.selectedHostIDs.isEmpty)
 
                         actionButton(title: L10n.reset, systemImage: "arrow.counterclockwise", help: L10n.resetHelp) {
                             monitor.resetStats()
@@ -108,7 +108,7 @@ struct ContentView: View {
                         actionButton(title: L10n.details, systemImage: "sidebar.right", help: L10n.detailsHelp) {
                             showingDetails = true
                         }
-                        .disabled(monitor.selectedHostID == nil)
+                        .disabled(monitor.selectedHostIDs.isEmpty)
 
                         toolbarSeparator
 
@@ -168,14 +168,14 @@ struct ContentView: View {
     }
 
     private var hostTable: some View {
-        Table(monitor.filteredHosts, selection: $monitor.selectedHostID) {
+        Table(monitor.filteredHosts, selection: $monitor.selectedHostIDs) {
             TableColumn("") { host in
                 Circle()
                     .fill(color(for: host.state))
                     .frame(width: 10, height: 10)
                     .help(L10n.state(host.state))
             }
-            .width(28)
+            .width(16)
 
             TableColumn(L10n.name) { host in
                 VStack(alignment: .leading, spacing: 2) {

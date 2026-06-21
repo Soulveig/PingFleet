@@ -1,5 +1,5 @@
 {
-  "version": "0.2.6",
-  "downloadURL": "https://example.com/pingfleet/update/PingFleet-0.2.6.zip",
-  "releaseNotes": "Tightens the main window layout, removes unused Avg/Min/Max table columns, and fixes toolbar button spacing."
+  "version": "0.2.7",
+  "downloadURL": "https://example.com/pingfleet/update/PingFleet-0.2.7.zip",
+  "releaseNotes": "Adds multi-row host selection for targeted Start and Ping Now actions, keeps all-host pinging when nothing is selected, and aligns the status indicator column."
 }

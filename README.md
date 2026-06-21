@@ -54,7 +54,7 @@ Developer ID Application: Alexey Golovatyuk (B8GJVVNEFH)
 Override release settings when needed:
 
 ```sh
-VERSION=0.2.6 UPDATE_MANIFEST_URL=https://your-domain.example/pingfleet/update/ ./Scripts/package-app.sh
+VERSION=0.2.7 UPDATE_MANIFEST_URL=https://your-domain.example/pingfleet/update/ ./Scripts/package-app.sh
 ```
 
 ## Notarize
@@ -77,7 +77,7 @@ PingFleet checks the URL from `MTUpdateManifestURL` in `Info.plist`. If it point
 
 For a real public release:
 
-1. Upload `PingFleet-0.2.6.zip` and `Updates/update.json` to your update host.
+1. Upload `PingFleet-0.2.7.zip` and `Updates/update.json` to your update host.
 2. Replace the default `https://example.com/pingfleet/update/` URL with your production URL.
 3. Keep `downloadURL` in `update.json` pointed at the notarized release zip.
 
@@ -85,9 +85,9 @@ Example manifest:
 
 ```json
 {
-  "version": "0.2.6",
-  "downloadURL": "https://example.com/pingfleet/update/PingFleet-0.2.6.zip",
-  "releaseNotes": "Tightens the main window layout and removes unused table columns."
+  "version": "0.2.7",
+  "downloadURL": "https://example.com/pingfleet/update/PingFleet-0.2.7.zip",
+  "releaseNotes": "Adds multi-row host selection for targeted ping actions."
 }
 ```
 

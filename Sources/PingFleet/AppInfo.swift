@@ -2,11 +2,20 @@ import Foundation
 
 enum AppInfo {
     static let name = "PingFleet"
-    static let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.2.6"
+    static let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.2.7"
     static let versionDisplay = "Version \(version)"
     static let updateManifestURLString = "https://example.com/pingfleet/update/"
 
     static let changelog = [
+        ReleaseNote(
+            version: "0.2.7",
+            date: "2026-06-22",
+            items: [
+                "Added multi-row host selection for targeted Start and Ping Now actions.",
+                "Kept Start and Ping Now polling all hosts when no rows are selected.",
+                "Tightened the default window width and aligned the status indicator column."
+            ]
+        ),
         ReleaseNote(
             version: "0.2.6",
             date: "2026-06-22",
