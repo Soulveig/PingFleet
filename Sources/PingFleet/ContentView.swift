@@ -17,6 +17,7 @@ struct ContentView: View {
             Divider()
             hostTable
         }
+        .navigationTitle("\(AppInfo.name) \(AppInfo.version)")
         .sheet(isPresented: $monitor.showAddHost) {
             AddHostView()
                 .environmentObject(monitor)
@@ -489,18 +490,6 @@ struct UpdatesView: View {
                 Text(updater.message)
                     .foregroundStyle(.secondary)
                     .textSelection(.enabled)
-            }
-
-            if let releaseNotes = updater.latestRelease?.releaseNotes, releaseNotes.isEmpty == false {
-                Divider()
-                Text(L10n.releaseNotes)
-                    .font(.headline)
-                ScrollView {
-                    Text(releaseNotes)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .textSelection(.enabled)
-                }
-                .frame(height: 120)
             }
 
             Divider()

@@ -1,5 +1,5 @@
 {
-  "version": "0.2.7",
-  "downloadURL": "https://example.com/pingfleet/update/PingFleet-0.2.7.zip",
-  "releaseNotes": "Adds multi-row host selection for targeted Start and Ping Now actions, keeps all-host pinging when nothing is selected, and aligns the status indicator column."
+  "version": "0.2.8",
+  "downloadURL": "https://github.com/Soulveig/PingFleet/releases/download/v0.2.8/PingFleet-0.2.8.zip",
+  "releaseNotes": "Switched automatic update checks to GitHub Releases and added the app version to the window title."
 }

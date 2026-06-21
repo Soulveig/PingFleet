@@ -2,11 +2,20 @@ import Foundation
 
 enum AppInfo {
     static let name = "PingFleet"
-    static let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.2.7"
+    static let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.2.8"
     static let versionDisplay = "Version \(version)"
-    static let updateManifestURLString = "https://example.com/pingfleet/update/"
+    static let updateManifestURLString = "https://api.github.com/repos/Soulveig/PingFleet/releases/latest"
 
     static let changelog = [
+        ReleaseNote(
+            version: "0.2.8",
+            date: "2026-06-22",
+            items: [
+                "Switched automatic update checks to GitHub Releases.",
+                "Ignored placeholder example.com update URLs left in older settings.",
+                "Added the app version to the main window title."
+            ]
+        ),
         ReleaseNote(
             version: "0.2.7",
             date: "2026-06-22",

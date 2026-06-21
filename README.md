@@ -11,7 +11,7 @@ PingFleet is a small native macOS monitoring app inspired by PingInfoView.
 - Import hosts from `.txt` or `.csv`.
 - Export the current table to CSV.
 - Russian/English interface text based on the system language.
-- MacTreeSize-style automatic updates with a hosted JSON manifest and release notes.
+- Automatic updates from GitHub Releases, with legacy JSON manifest support kept.
 - Keep host state in `~/Library/Application Support/PingFleet/hosts.json`.
 
 ## Dependencies
@@ -54,7 +54,7 @@ Developer ID Application: Alexey Golovatyuk (B8GJVVNEFH)
 Override release settings when needed:
 
 ```sh
-VERSION=0.2.7 UPDATE_MANIFEST_URL=https://your-domain.example/pingfleet/update/ ./Scripts/package-app.sh
+VERSION=0.2.8 UPDATE_MANIFEST_URL=https://api.github.com/repos/Soulveig/PingFleet/releases/latest ./Scripts/package-app.sh
 ```
 
 ## Notarize
@@ -65,29 +65,35 @@ PingFleet uses the same stored notary profile as MacTreeSize by default:
 ./Scripts/notarize-app.sh
 ```
 
-Full release packaging signs, notarizes, staples, creates the update zip, and updates `Updates/update.json`:
+Full release packaging signs, notarizes, staples, creates the update zip, and updates the legacy `Updates/update.json`:
 
 ```sh
-BASE_URL=https://your-domain.example/pingfleet ./Scripts/make-release.sh
+./Scripts/make-release.sh
 ```
 
 ## Auto Updates
 
-PingFleet checks the URL from `MTUpdateManifestURL` in `Info.plist`. If it points to a folder, the app automatically appends `update.json`, matching the MacTreeSize update flow.
+PingFleet checks the URL from `MTUpdateManifestURL` in `Info.plist`. By default it points to the latest GitHub Release API endpoint:
+
+```txt
+https://api.github.com/repos/Soulveig/PingFleet/releases/latest
+```
+
+The updater reads the release tag, release notes, and the `PingFleet-x.y.z.zip` asset from GitHub. Legacy hosted JSON manifests are still supported; if the update URL points to a folder, the app automatically appends `update.json`, matching the earlier MacTreeSize-style update flow.
 
 For a real public release:
 
-1. Upload `PingFleet-0.2.7.zip` and `Updates/update.json` to your update host.
-2. Replace the default `https://example.com/pingfleet/update/` URL with your production URL.
-3. Keep `downloadURL` in `update.json` pointed at the notarized release zip.
+1. Create a GitHub release such as `v0.2.8`.
+2. Attach the notarized `PingFleet-0.2.8.zip` asset.
+3. Keep the asset name in the `PingFleet-x.y.z.zip` format.
 
-Example manifest:
+Legacy manifest format:
 
 ```json
 {
-  "version": "0.2.7",
-  "downloadURL": "https://example.com/pingfleet/update/PingFleet-0.2.7.zip",
-  "releaseNotes": "Adds multi-row host selection for targeted ping actions."
+  "version": "0.2.8",
+  "downloadURL": "https://github.com/Soulveig/PingFleet/releases/download/v0.2.8/PingFleet-0.2.8.zip",
+  "releaseNotes": "Switched automatic update checks to GitHub Releases."
 }
 ```
 
