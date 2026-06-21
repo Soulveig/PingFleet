@@ -54,7 +54,7 @@ Developer ID Application: Alexey Golovatyuk (B8GJVVNEFH)
 Override release settings when needed:
 
 ```sh
-VERSION=0.2.9 UPDATE_MANIFEST_URL=https://api.github.com/repos/Soulveig/PingFleet/releases/latest ./Scripts/package-app.sh
+VERSION=0.2.10 UPDATE_MANIFEST_URL=https://api.github.com/repos/Soulveig/PingFleet/releases/latest ./Scripts/package-app.sh
 ```
 
 ## Notarize
@@ -83,8 +83,8 @@ The updater reads the release tag and the `PingFleet-x.y.z.zip` asset from GitHu
 
 For a real public release:
 
-1. Create a GitHub release such as `v0.2.9`.
-2. Attach the notarized `PingFleet-0.2.9.zip` asset.
+1. Create a GitHub release such as `v0.2.10`.
+2. Attach the notarized `PingFleet-0.2.10.zip` asset.
 3. Keep the asset name in the `PingFleet-x.y.z.zip` format.
 
 ## Import Format

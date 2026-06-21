@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT_DIR"
 
-VERSION="${VERSION:-0.2.9}"
+VERSION="${VERSION:-0.2.10}"
 IDENTITY="${IDENTITY:-Developer ID Application: Alexey Golovatyuk (B8GJVVNEFH)}"
 UPDATE_MANIFEST_URL="${UPDATE_MANIFEST_URL:-https://api.github.com/repos/Soulveig/PingFleet/releases/latest}"
 export VERSION UPDATE_MANIFEST_URL
@@ -45,6 +45,10 @@ cat > "$CONTENTS_DIR/Info.plist" <<'PLIST'
     <string>__VERSION__</string>
     <key>CFBundleVersion</key>
     <string>__VERSION__</string>
+    <key>CFBundleGetInfoString</key>
+    <string>PingFleet __VERSION__, Copyright © 2026 Alexey Golovatyuk</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>Copyright © 2026 Alexey Golovatyuk</string>
     <key>LSMinimumSystemVersion</key>
     <string>14.0</string>
     <key>LSApplicationCategoryType</key>

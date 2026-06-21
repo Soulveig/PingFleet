@@ -121,7 +121,12 @@ struct ContentView: View {
                             exporting = true
                         }
 
-                        actionButton(title: L10n.update, systemImage: "arrow.triangle.2.circlepath", help: L10n.updatesHelp) {
+                        actionButton(
+                            title: L10n.update,
+                            systemImage: updater.updateAvailable ? "arrow.down.circle.fill" : "arrow.triangle.2.circlepath",
+                            prominent: updater.updateAvailable,
+                            help: L10n.updatesHelp
+                        ) {
                             showingUpdates = true
                             updater.checkForUpdates()
                         }
@@ -171,55 +176,78 @@ struct ContentView: View {
     private var hostTable: some View {
         Table(monitor.filteredHosts, selection: $monitor.selectedHostIDs) {
             TableColumn("") { host in
-                Circle()
-                    .fill(color(for: host.state))
-                    .frame(width: 10, height: 10)
-                    .help(L10n.state(host.state))
+                detailTrigger(for: host) {
+                    Circle()
+                        .fill(color(for: host.state))
+                        .frame(width: 10, height: 10)
+                        .help(L10n.state(host.state))
+                }
             }
             .width(16)
 
             TableColumn(L10n.name) { host in
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(host.name)
-                        .fontWeight(.medium)
-                    Text(host.address)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                detailTrigger(for: host) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(host.name)
+                            .fontWeight(.medium)
+                        Text(host.address)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 2)
                 }
-                .padding(.vertical, 2)
             }
             .width(min: 170, ideal: 220)
 
             TableColumn(L10n.status) { host in
-                Text(L10n.state(host.state))
-                    .foregroundStyle(color(for: host.state))
+                detailTrigger(for: host) {
+                    Text(L10n.state(host.state))
+                        .foregroundStyle(color(for: host.state))
+                }
             }
             .width(80)
 
             TableColumn(L10n.last) { host in
-                Text(format(host.lastLatencyMilliseconds))
-                    .monospacedDigit()
+                detailTrigger(for: host) {
+                    Text(format(host.lastLatencyMilliseconds))
+                        .monospacedDigit()
+                }
             }
             .width(76)
 
             TableColumn(L10n.loss) { host in
-                Text(String(format: "%.1f%%", host.lossPercent))
-                    .monospacedDigit()
+                detailTrigger(for: host) {
+                    Text(String(format: "%.1f%%", host.lossPercent))
+                        .monospacedDigit()
+                }
             }
             .width(72)
 
             TableColumn(L10n.sent) { host in
-                Text("\(host.sentCount)")
-                    .monospacedDigit()
+                detailTrigger(for: host) {
+                    Text("\(host.sentCount)")
+                        .monospacedDigit()
+                }
             }
             .width(60)
 
             TableColumn(L10n.lastCheck) { host in
-                Text(host.lastCheckedAt.map(Self.timeFormatter.string) ?? "-")
-                    .foregroundStyle(.secondary)
+                detailTrigger(for: host) {
+                    Text(host.lastCheckedAt.map(Self.timeFormatter.string) ?? "-")
+                        .foregroundStyle(.secondary)
+                }
             }
             .width(min: 120, ideal: 150)
         }
+    }
+
+    private func detailTrigger<Content: View>(for host: PingHost, @ViewBuilder content: () -> Content) -> some View {
+        content()
+            .contentShape(Rectangle())
+            .onTapGesture(count: 2) {
+                monitor.selectedHostIDs = [host.id]
+                showingDetails = true
+            }
     }
 
     private func color(for state: PingState) -> Color {
