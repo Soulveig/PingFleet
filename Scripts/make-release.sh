@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT_DIR"
 
-VERSION="${VERSION:-0.2.10}"
+VERSION="${VERSION:-0.2.11}"
 UPDATE_MANIFEST_URL="${UPDATE_MANIFEST_URL:-https://api.github.com/repos/Soulveig/PingFleet/releases/latest}"
 ZIP_PATH="$ROOT_DIR/.build/release/PingFleet-$VERSION.zip"
 NOTARIZE="${NOTARIZE:-1}"

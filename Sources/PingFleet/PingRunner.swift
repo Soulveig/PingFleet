@@ -7,6 +7,11 @@ struct PingResult {
 
 actor PingRunner {
     func ping(address: String, timeoutSeconds: Int) async -> PingResult {
+        let address = address.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !address.hasPrefix("-") else {
+            return PingResult(latencyMilliseconds: nil, errorMessage: "Invalid host")
+        }
+
         let process = Process()
         let outputPipe = Pipe()
         let errorPipe = Pipe()

@@ -122,6 +122,7 @@ final class AppUpdater: ObservableObject {
 
                 title = L10n.installingUpdateTitle
                 message = L10n.installingUpdateMessage
+                try Self.validateDownloadedApp(newAppURL)
                 try Self.launchInstallHelper(currentAppURL: currentAppURL, newAppURL: newAppURL, tempRoot: tempRoot)
                 exit(0)
             } catch {
@@ -181,12 +182,34 @@ final class AppUpdater: ObservableObject {
         }
 
         for case let url as URL in enumerator {
-            if url.pathExtension == "app", url.lastPathComponent == "\(AppInfo.name).app" {
+            let values = try? url.resourceValues(forKeys: [.isDirectoryKey, .isSymbolicLinkKey])
+            if url.pathExtension == "app",
+               url.lastPathComponent == "\(AppInfo.name).app",
+               values?.isDirectory == true,
+               values?.isSymbolicLink != true {
                 return url
             }
         }
 
         throw AppUpdateError.invalidArchive
+    }
+
+    private static func validateDownloadedApp(_ appURL: URL) throws {
+        let bundle = Bundle(url: appURL)
+        let bundleIdentifier = bundle?.bundleIdentifier
+        guard bundleIdentifier == "com.alexeygolovatyuk.pingfleet" else {
+            throw AppUpdateError.invalidDownloadedApp("Unexpected bundle identifier: \(bundleIdentifier ?? "missing")")
+        }
+
+        try runProcess("/usr/sbin/spctl", arguments: ["--assess", "--type", "execute", "--verbose=4", appURL.path])
+
+        let signatureOutput = try runProcessCapturingOutput(
+            "/usr/bin/codesign",
+            arguments: ["--display", "--verbose=4", appURL.path]
+        )
+        guard signatureOutput.contains("TeamIdentifier=B8GJVVNEFH") else {
+            throw AppUpdateError.invalidDownloadedApp("Unexpected signing team.")
+        }
     }
 
     private static func launchInstallHelper(currentAppURL: URL, newAppURL: URL, tempRoot: URL) throws {
@@ -273,6 +296,25 @@ final class AppUpdater: ObservableObject {
         }
     }
 
+    private static func runProcessCapturingOutput(_ executable: String, arguments: [String]) throws -> String {
+        let process = Process()
+        let outputPipe = Pipe()
+        let errorPipe = Pipe()
+        process.executableURL = URL(fileURLWithPath: executable)
+        process.arguments = arguments
+        process.standardOutput = outputPipe
+        process.standardError = errorPipe
+        try process.run()
+        process.waitUntilExit()
+
+        let output = String(data: outputPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+        let error = String(data: errorPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+        guard process.terminationStatus == 0 else {
+            throw AppUpdateError.processFailed(executable, Int(process.terminationStatus))
+        }
+        return output + "\n" + error
+    }
+
     private static func shellQuoted(_ value: String) -> String {
         "'\(value.replacingOccurrences(of: "'", with: "'\\''"))'"
     }
@@ -324,6 +366,7 @@ enum AppUpdateError: LocalizedError {
     case badStatus(Int)
     case invalidManifest
     case invalidArchive
+    case invalidDownloadedApp(String)
     case installFolderNotWritable(String)
     case processFailed(String, Int)
 
@@ -335,6 +378,8 @@ enum AppUpdateError: LocalizedError {
             return L10n.invalidUpdateManifest
         case .invalidArchive:
             return L10n.invalidUpdateArchive
+        case .invalidDownloadedApp(let reason):
+            return L10n.invalidDownloadedApp(reason)
         case .installFolderNotWritable(let path):
             return L10n.installFolderNotWritable(path)
         case .processFailed(let executable, let code):

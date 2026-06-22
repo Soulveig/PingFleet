@@ -109,6 +109,10 @@ enum L10n {
     static let invalidUpdateManifest = text("The update manifest is missing required version information.", "В манифесте обновления нет обязательной информации о версии.")
     static let invalidUpdateArchive = text("The downloaded archive does not contain PingFleet.app.", "Скачанный архив не содержит PingFleet.app.")
 
+    static func invalidDownloadedApp(_ reason: String) -> String {
+        text("The downloaded app did not pass signature validation: \(reason)", "Скачанное приложение не прошло проверку подписи: \(reason)")
+    }
+
     static func installFolderNotWritable(_ path: String) -> String {
         text("PingFleet cannot replace itself because the install folder is not writable: \(path).", "PingFleet не может заменить себя, потому что папка установки недоступна для записи: \(path).")
     }

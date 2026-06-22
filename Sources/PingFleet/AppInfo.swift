@@ -2,11 +2,19 @@ import Foundation
 
 enum AppInfo {
     static let name = "PingFleet"
-    static let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.2.10"
+    static let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.2.11"
     static let versionDisplay = "Version \(version)"
     static let updateManifestURLString = "https://api.github.com/repos/Soulveig/PingFleet/releases/latest"
 
     static let changelog = [
+        ReleaseNote(
+            version: "0.2.11",
+            date: "2026-06-22",
+            items: [
+                "Added downloaded update signature validation before installation.",
+                "Rejected host values that look like command-line options."
+            ]
+        ),
         ReleaseNote(
             version: "0.2.10",
             date: "2026-06-22",
